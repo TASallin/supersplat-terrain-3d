@@ -28,7 +28,20 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(cacheName)
         .then((cache) => {
-            cache.addAll(cacheUrls);
+            // Use Promise.allSettled to handle individual failures gracefully
+            return Promise.allSettled(
+                cacheUrls.map(url => cache.add(url))
+            ).then(results => {
+                // Log any failed requests for debugging
+                results.forEach((result, index) => {
+                    if (result.status === 'rejected') {
+                        console.warn(`Failed to cache: ${cacheUrls[index]}`, result.reason);
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Service worker install failed:', error);
         })
     );
 });
