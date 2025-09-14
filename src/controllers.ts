@@ -101,11 +101,11 @@ class PointerController {
                         (event.altKey || event.metaKey ? 'zoom' : null)) :
                     null;
 
-                if (mod === 'orbit' || (mod === null && buttons[0])) {
+                if (mod === 'orbit' || (mod === null && buttons[0] && !event.ctrlKey)) {
                     orbit(dx, dy);
                 } else if (mod === 'zoom' || (mod === null && buttons[1])) {
                     zoom(dy * -0.02);
-                } else if (mod === 'pan' || (mod === null && buttons[2])) {
+                } else if (mod === 'pan' || (mod === null && buttons[2]) || (buttons[0] && event.ctrlKey)) {
                     pan(x, y, dx, dy);
                 }
             } else {
